@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ALL_MKT Bhavcopy Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/en.js"></script>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="nv-bar">
+    <div class="title">ALL_MKT Builder</div>
+    <div class="brand">Validus Fintech</div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Date Range</h2>
+      <div class="row">
+        <input id="dateRange" placeholder="Select date range (IST)" />
+        <button id="runBtn" class="btn primary">Run for selected date(s)</button>
+      </div>
+      <div class="hint">Time zone: Asia/Kolkata (IST)</div>
+    </section>
+
+    <section class="card">
+      <h2>AMFI ISINs</h2>
+      <div class="row">
+        <textarea id="isinInput" rows="5" placeholder="Paste ISINs (comma/newline separated)"></textarea>
+      </div>
+      <div class="row">
+        <button id="saveIsin" class="btn">Save ISIN list</button>
+        <button id="loadIsin" class="btn">Load saved list</button>
+        <button id="openFiles" class="btn">Open Files (originals)</button>
+      </div>
+      <div id="isinValidation" class="hint"></div>
+    </section>
+
+    <section class="card">
+      <h2>Preview (Top 10)</h2>
+      <div class="row">
+        <input id="search" placeholder="Search ISIN/Ticker/Name" />
+        <select id="srcFilter">
+          <option value="">All Sources</option>
+          <option value="NSE">NSE</option>
+          <option value="BSE">BSE</option>
+          <option value="AMFI">AMFI</option>
+        </select>
+      </div>
+      <div id="tableWrap" class="table-wrap"></div>
+      <div id="downloads" class="downloads"></div>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary>Status log</summary>
+        <pre id="statusLog" class="log"></pre>
+      </details>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© Dinesh_FA@Validus</span>
+  </footer>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="./app.js" type="module"></script>
+</body>
+</html>
