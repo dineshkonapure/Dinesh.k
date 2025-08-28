@@ -1,5 +1,5 @@
 [build]
-  base = "all-mkt-bhavcopy"
+  base = "all-mkt-bhavcopy"   # <- your subfolder
   command = "npm run build"
   publish = "site"
   functions = "netlify/functions"
@@ -10,4 +10,4 @@
 
 [[scheduled.functions]]
   name = "schedule-run"
-  cron = "30 11 * * *" # 5:00 PM IST
+  cron = "30 11 * * *"  # 5:00 PM IST
