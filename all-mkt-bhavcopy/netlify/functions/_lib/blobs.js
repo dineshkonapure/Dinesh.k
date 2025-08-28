@@ -5,9 +5,11 @@ const CONFIG = "config";
 
 export async function putArtifact(path, content, contentType="text/csv"){
   const store = getStore(ARTIFACTS);
-  await store.set(path, content, { contentType, metadata: { createdAt: new Date().toISOString() }});
-  const url = await store.getSignedUrl(path, { method:"GET", expiresIn: 60*60*24*7 });
-  return url;
+await store.set(path, content, {
+metadata: { contentType, createdAt: new Date().toISOString() }
+});
+// Serve via our Function so links don’t expire and we control headers
+return `/.netlify/functions/download?path=${encodeURIComponent(path)}`;
 }
 export async function getArtifact(path){
   const store = getStore(ARTIFACTS);
