@@ -1,7 +1,7 @@
 // Bhav_GPT/src/App.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { nowInIST, toYMD, latestTradingDay, isWeekend } from "./lib/dates";
-import { fetchOriginal, convert, openAll } from "./lib/api";
+import { fetchOriginal, convert, openAll, convertUpload } from "./lib/api";
 import { parseCsv } from "./lib/csv";
 
 type Mode = "tabs" | "zip";
@@ -278,4 +278,5 @@ function IsinDrawer() {
     </div>
   );
 }
+
 
