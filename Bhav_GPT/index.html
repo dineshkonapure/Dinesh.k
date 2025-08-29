@@ -2,11 +2,47 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
     <title>Bhavcopy</title>
+    <style>
+      :root{ font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial; }
+      html,body{ height:100%; }
+      body{ margin:0; background:#0b0f14; color:#e7edf3; }
+      header{ position:sticky; top:0; background:#0f141b; border-bottom:1px solid #1e2835; padding:12px 16px; }
+      .container{ padding:16px; max-width:1100px; margin:0 auto; }
+      .row{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+      .card{ background:#0f141b; border:1px solid #1e2835; border-radius:12px; padding:16px; margin:12px 0; }
+      input, button, select, textarea{ background:#0b0f14; color:#e7edf3; border:1px solid #2a3648; border-radius:8px; padding:8px 12px; }
+      button{ cursor:pointer; }
+      button.primary{ background:#1661ff; border-color:#1661ff; }
+      table{ width:100%; border-collapse:collapse; }
+      th, td{ border-bottom:1px solid #1e2835; padding:8px 6px; font-size:12px; }
+      th{ position:sticky; top:0; background:#0f141b; }
+      .pill{ padding:4px 8px; border:1px solid #2a3648; border-radius:999px; font-size:12px; }
+      .muted{ color:#9fb2c8; }
+      .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;}
+      .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; }
+      .chips{ display:flex; flex-wrap:wrap; gap:6px; }
+      .chip{ background:#122030; border:1px solid #1e314a; padding:4px 8px; border-radius:999px; }
+      /* Minimal visible fallback if JS fails before React mounts */
+      #nojs{ padding:16px; }
+      noscript{ display:block; padding:16px; color:#fff; background:#c00; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <header class="row">
+      <div style="font-weight:700">Bhavcopy</div>
+      <div class="muted">Auto &amp; specific-date downloader · Open All · Preview &amp; Copy · ISIN filter · Manual convert</div>
+    </header>
+
+    <div id="root">
+      <div id="nojs" class="muted">Loading app… If this text stays, check the browser console for errors.</div>
+    </div>
+
+    <!-- Vite will inject the built JS here; in dev this is /src/main.tsx -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
