@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "site"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["netlify/functions/_lib/**"]
+
+[[scheduled.functions]]
+  name = "schedule-run"
+  cron = "30 11 * * *" # 5:00 PM IST
