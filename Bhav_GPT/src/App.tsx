@@ -1,5 +1,5 @@
 // Bhav_GPT/src/App.tsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { nowInIST, toYMD, latestTradingDay, isWeekend } from "./lib/dates";
 import { fetchOriginal, convert, openAll, convertUpload } from "./lib/api";
 import { parseCsv } from "./lib/csv";
@@ -16,7 +16,14 @@ export default function App() {
   const [preview, setPreview] = useState<string[][]>([]);
   const [header, setHeader] = useState<string[]>([]);
 
-  const addLog = (s: string) => setLog((x) => [s, ...x].slice(0, 200));
+  // Refs for Manual Convert inputs
+  const amfiRef = useRef<HTMLInputElement | null>(null);
+  const nseRef = useRef<HTMLInputElement | null>(null);
+  const bseRef = useRef<HTMLInputElement | null>(null);
+  const przipRef = useRef<HTMLInputElement | null>(null);
+
+  const addLog = (s: string) =>
+    setLog((x) => [s, ...x].slice(0, 200));
 
   async function doFetchAll() {
     addLog("Fetching originals for " + date);
@@ -37,29 +44,47 @@ export default function App() {
   }
 
   async function doOpenAll() {
-    const r = await openAll(date, type, mode);
-    if (mode === "tabs") {
-      const { links } = await r.json();
-      (links as string[]).forEach((href) => window.open(href, "_blank"));
-      addLog(`Opened ${links.length} tab links.`);
-    } else {
-      const blob = await r.blob();
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `BhavCopy_${type}_${date}.zip`;
-      a.click();
-      addLog("Downloaded zip for " + type);
+    try {
+      const r = await openAll(date, type, mode);
+      if (!r.ok) {
+        const t = await r.text().catch(() => "");
+        throw new Error(t || `Open All failed (${r.status})`);
+      }
+      if (mode === "tabs") {
+        const { links } = await r.json();
+        (links as string[]).forEach((href) => window.open(href, "_blank"));
+        addLog(`Opened ${links.length} tab links.`);
+      } else {
+        const blob = await r.blob();
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `BhavCopy_${type}_${date}.zip`;
+        a.click();
+        addLog("Downloaded zip for " + type);
+      }
+    } catch (e: any) {
+      addLog(`Open All error: ${e?.message || e}`);
+      alert(e?.message || "Open All failed.");
     }
   }
 
   async function loadPreview() {
-    addLog("Loading preview ALL_MKT...");
-    const r = await convert(date, "all_mkt");
-    const txt = await r.text();
-    const { header: h, rows } = parseCsv(txt);
-    setHeader(h);
-    setPreview(rows.slice(0, 250));
-    addLog("Preview loaded.");
+    try {
+      addLog("Loading preview ALL_MKT...");
+      const r = await convert(date, "all_mkt");
+      if (!r.ok) {
+        const t = await r.text().catch(() => "");
+        throw new Error(t || `Preview convert failed (${r.status})`);
+      }
+      const txt = await r.text();
+      const { header: h, rows } = parseCsv(txt);
+      setHeader(h);
+      setPreview(rows.slice(0, 250));
+      addLog("Preview loaded.");
+    } catch (e: any) {
+      addLog(`Preview error: ${e?.message || e}`);
+      alert(e?.message || "Failed to load preview.");
+    }
   }
 
   function pickLatestTrading() {
@@ -71,6 +96,48 @@ export default function App() {
     const d = new Date(date + "T00:00:00");
     return isWeekend(d);
   }, [date]);
+
+  // Manual Convert handler
+  const doManualConvert = async () => {
+    try {
+      const fd = new FormData();
+      const push = (name: string, input: HTMLInputElement | null) => {
+        const file = input?.files?.[0];
+        if (file) fd.append(name, file);
+      };
+
+      push("amfi", amfiRef.current);
+      push("nse", nseRef.current);
+      push("bse", bseRef.current);
+      push("przip", przipRef.current);
+
+      // Require at least one file
+      if ([...fd.keys()].length === 0) {
+        const msg = "Please choose at least one file (AMFI/NSE/BSE/PR.zip).";
+        addLog(msg);
+        alert(msg);
+        return;
+      }
+
+      addLog("Uploading files for manual convert...");
+      const r = await convertUpload(fd); // should return a Response
+      if (!r.ok) {
+        const t = await r.text().catch(() => "");
+        throw new Error(t || `Manual convert failed (${r.status})`);
+      }
+
+      // Expecting a ZIP from the API
+      const blob = await r.blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `BhavCopy_manual_convert_${date.replace(/-/g, "")}.zip`;
+      a.click();
+      addLog("Manual convert ZIP downloaded.");
+    } catch (e: any) {
+      addLog(`Manual convert error: ${e?.message || e}`);
+      alert(e?.message || "Manual convert failed.");
+    }
+  };
 
   return (
     <div>
@@ -194,33 +261,35 @@ export default function App() {
             </table>
           </div>
         </div>
-import { convertUpload } from "./lib/api"; // make sure api.ts includes convertUpload as shown earlier
 
-// inside your component JSX, e.g., in "Downloads" card:
-<div className="row">
-  <input type="file" id="amfi" />
-  <input type="file" id="nse" />
-  <input type="file" id="bse" />
-  <input type="file" id="przip" />
-  <button
-    onClick={async () => {
-      const fd = new FormData();
-      const f = (id: string) => (document.getElementById(id) as HTMLInputElement)?.files?.[0];
-      if (f("amfi")) fd.append("amfi", f("amfi")!);
-      if (f("nse")) fd.append("nse", f("nse")!);
-      if (f("bse")) fd.append("bse", f("bse")!);
-      if (f("przip")) fd.append("przip", f("przip")!);
-      const r = await convertUpload(fd);
-      const blob = await r.blob();
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "BhavCopy_manual_convert.zip";
-      a.click();
-    }}
-  >
-    Manual Convert (Upload → ZIP)
-  </button>
-</div>
+        {/* ---- Manual Convert card (fixed) ---- */}
+        <div className="card">
+          <h3>Manual Convert (Upload → ZIP)</h3>
+          <p className="muted">
+            Upload any combination of AMFI/NSE/BSE CSVs and/or PR.zip. Leave blank if not applicable.
+          </p>
+          <div className="row" style={{ gap: 8, flexWrap: "wrap" }}>
+            <label>
+              AMFI&nbsp;
+              <input ref={amfiRef} type="file" accept=".csv" />
+            </label>
+            <label>
+              NSE&nbsp;
+              <input ref={nseRef} type="file" accept=".csv" />
+            </label>
+            <label>
+              BSE&nbsp;
+              <input ref={bseRef} type="file" accept=".csv" />
+            </label>
+            <label>
+              PR.zip&nbsp;
+              <input ref={przipRef} type="file" accept=".zip" />
+            </label>
+            <button className="primary" onClick={doManualConvert}>
+              Manual Convert (Upload → ZIP)
+            </button>
+          </div>
+        </div>
 
         <div className="card">
           <h3>ISINs</h3>
@@ -278,5 +347,3 @@ function IsinDrawer() {
     </div>
   );
 }
-
-
