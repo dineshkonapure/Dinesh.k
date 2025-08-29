@@ -194,6 +194,33 @@ export default function App() {
             </table>
           </div>
         </div>
+import { convertUpload } from "./lib/api"; // make sure api.ts includes convertUpload as shown earlier
+
+// inside your component JSX, e.g., in "Downloads" card:
+<div className="row">
+  <input type="file" id="amfi" />
+  <input type="file" id="nse" />
+  <input type="file" id="bse" />
+  <input type="file" id="przip" />
+  <button
+    onClick={async () => {
+      const fd = new FormData();
+      const f = (id: string) => (document.getElementById(id) as HTMLInputElement)?.files?.[0];
+      if (f("amfi")) fd.append("amfi", f("amfi")!);
+      if (f("nse")) fd.append("nse", f("nse")!);
+      if (f("bse")) fd.append("bse", f("bse")!);
+      if (f("przip")) fd.append("przip", f("przip")!);
+      const r = await convertUpload(fd);
+      const blob = await r.blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "BhavCopy_manual_convert.zip";
+      a.click();
+    }}
+  >
+    Manual Convert (Upload → ZIP)
+  </button>
+</div>
 
         <div className="card">
           <h3>ISINs</h3>
@@ -251,3 +278,4 @@ function IsinDrawer() {
     </div>
   );
 }
+
