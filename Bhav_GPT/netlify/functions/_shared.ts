@@ -1,17 +1,24 @@
+// Bhav_GPT/netlify/functions/_shared.ts
 import { getStore } from "@netlify/blobs";
 
-export const store = getStore("bhavcopy"); // namespace
+export const store = getStore("bhavcopy"); // Blob store namespace
 
 export type Source = "amfi" | "nse" | "bse" | "pr";
 
-export function yyyymmdd(d: Date) {
-  return d.toISOString().slice(0,10).replace(/-/g,"");
+export function yyyymmdd(d: Date): string {
+  return d.toISOString().slice(0, 10).replace(/-/g, "");
 }
-export function ddmmyy(d: Date) {
-  const dd = String(d.getDate()).padStart(2,'0');
-  const mm = String(d.getMonth()+1).padStart(2,'0');
-  const yy = String(d.getFullYear()).slice(-2);
+
+export function ddmmyy(d: Date): string {
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const yy = String(d.getUTCFullYear()).slice(-2);
   return `${dd}${mm}${yy}`;
+}
+
+function ddmmmYYYY(d: Date): string {
+  const M = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getUTCMonth()];
+  return `${String(d.getUTCDate()).padStart(2, "0")}-${M}-${d.getUTCFullYear()}`;
 }
 
 export function urls(d: Date) {
@@ -24,27 +31,21 @@ export function urls(d: Date) {
     pr:   `https://archives.nseindia.com/archives/equities/bhavcopy/pr/PR${DDMMYY}.zip`,
   };
 }
-// AMFI expects DD-MMM-YYYY
-function ddmmmYYYY(d: Date){
-  const MMM = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
-  return `${String(d.getDate()).padStart(2,'0')}-${MMM}-${d.getFullYear()}`;
-}
 
-export function keyFor(kind: "original"|"processed", src: Source|string, date: Date, ext: string) {
+export function keyFor(
+  kind: "original" | "processed",
+  src: Source | string,
+  date: Date,
+  ext: string
+) {
   const ymd = yyyymmdd(date);
   return `${kind}/${src}/${ymd}.${ext}`;
 }
 
-export function ok(res: Response, origin = "*") {
-  const h = new Headers(res.headers);
-  h.set("Access-Control-Allow-Origin", origin);
-  h.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  h.set("Access-Control-Allow-Headers", "Content-Type,Authorization");
-  return new Response(res.body, { ...res, headers: h });
-}
-
-export async function readBlob(key: string) {
-  const b = await store.get(key, { type: "stream" });
-  if (!b) return null;
-  return b;
+export function corsHeaders(origin = "*") {
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type,Authorization",
+  };
 }
