@@ -1,8 +1,12 @@
 [build]
+  publish = "."
   functions = "netlify/functions"
-  publish   = "."
 
 [[headers]]
-  for = "/.netlify/functions/*"
+  for = "/*"
   [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=()"
     Cache-Control = "no-store"
