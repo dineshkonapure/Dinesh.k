@@ -13,6 +13,6 @@ export const openAll = (date: string, type: "original" | "processed", mode: "tab
 export const status = () =>
   fetch(`${API}/status`).then((r) => r.json());
 
-// UPDATED: underscore in function name (no nested path segment)
+// Expose the manual-convert endpoint (serverless function name uses underscore)
 export const convertUpload = (form: FormData) =>
   fetch(`${API}/convert_upload`, { method: "POST", body: form });
