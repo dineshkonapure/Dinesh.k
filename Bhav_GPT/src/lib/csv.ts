@@ -1,0 +1,1 @@
+Same parsing + AMFI→All-Market mapping as the server file (kept in client to power manual convert preview & Copy(TAB) even when offline). Logic mirrors your HTML.
