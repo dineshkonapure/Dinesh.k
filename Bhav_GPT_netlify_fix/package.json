@@ -29,3 +29,8 @@
     "node": ">=18.0.0"
   }
 }
+{
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1"
+  }
+}
