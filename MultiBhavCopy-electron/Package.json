@@ -1,0 +1,37 @@
+{
+  "name": "multi-bhavcopy",
+  "version": "1.0.0",
+  "description": "Multi BhavCopy — packaged Electron app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "obfuscate": "javascript-obfuscator www/js/app.js --output www/js/app.obf.js --compact true --control-flow-flattening true --control-flow-flattening-threshold 0.8 --dead-code-injection true --dead-code-injection-threshold 0.4 --string-array true --string-array-encoding rc4 --string-array-threshold 0.9 --disable-console-output true",
+    "pack:dir": "electron-builder --dir",
+    "dist": "electron-builder --windows nsis --x64",
+    "build-all": "npm run obfuscate && npm run dist"
+  },
+  "author": "You",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^26.0.0",
+    "electron-builder": "^24.0.0",
+    "javascript-obfuscator": "^5.0.0"
+  },
+  "build": {
+    "appId": "com.example.multibhavcopy",
+    "productName": "MultiBhavCopy",
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "www/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    }
+  }
+}
