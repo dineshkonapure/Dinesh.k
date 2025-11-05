@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NSE BhavCopy — Finblue Minimal+</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="card" role="region" aria-label="NSE BhavCopy">
+    <div id="progress" class="progress"></div>
+    <header><h1>NSE-BSE BhavCopy & CA</h1></header>
+
+    <div class="controls">
+      <button id="btnDownload" class="btn btn-primary">Download ▼</button>
+      <button id="clearDates" class="btn">Clear ✘</button>
+      <span id="selDate" class="tag" aria-live="polite">No date selected</span>
+    </div>
+
+    <div id="infoLine" class="info" aria-live="polite"></div>
+
+    <div class="calendar">
+      <div class="cal-top">
+        <div class="nav-left">
+          <button id="prevM" class="nav" aria-label="Previous Month">‹</button>
+          <button id="todayM" class="nav" aria-label="Current Month">●</button>
+          <button id="nextM" class="nav" aria-label="Next Month">›</button>
+        </div>
+        <div id="calTitle" class="cal-title" aria-live="polite"></div>
+        <div class="quick-wrap">
+          <button id="quickChip" class="quick" title="Ctrl+Q">↺ Quick Select</button>
+        </div>
+      </div>
+
+      <div class="cal-head">
+        <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+      </div>
+      <div id="calGrid" class="cal-grid" role="grid" aria-label="Calendar"></div>
+    </div>
+
+    <footer>© Dinesh FA@Validus</footer>
+  </div>
+
+<script src="js/app.obf.js"></script>
+<iframe id="dlframe" style="width:0;height:0;border:0;position:absolute;left:-9999px;"></iframe>
+</body>
+</html>
